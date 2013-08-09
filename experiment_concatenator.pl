@@ -10,7 +10,8 @@ use warnings;
 
 # die: "usage: file_con <replicate1.ratio> <replicate2.ratio> <replicate3.ratio> <Output.txt>" unless @ARGV==4;
 
-#   perl experiment_concatenator.pl A10.ratio B10.ratio C10.ratio test1.txt
+#	perl experiment_concatenator.pl A10.ratio B10.ratio C10.ratio test1.txt
+#	perl experiment_concatenator.pl A12.ratio B12.ratio C12.ratio test1.txt
 
 #tic ratios A B C mean stdev flag
 
@@ -31,7 +32,7 @@ $rep3 =~ s/\.ratio//;
 open (TEMP, ">temp.txt") or die 'File cannot be opened\n\n';
 print TEMP "Peptide\tProteinName\tProteinAccessionNumber\tTicRatio$rep1.F/$rep1.H\tTicRatio$rep2.F/$rep2.H\tTicRatio$rep2.F/C$rep2.H\tScanRatio$rep1.F/$rep1.H\tScanRatio$rep2.F/$rep2.H\tScanRatio$rep2.F/C$rep2.H\tAmbiguousSite\n";
 
-my (@linedata1, @linedata2, @linedata3, $peptide1, $peptide2, $peptid3);
+my (@linedata1, @linedata2, @linedata3, $peptide1, $peptide2, $peptide3);
 
 my %hash1;
 while (<INFILE1>) {
@@ -65,7 +66,7 @@ my (@temp_array1, @temp_array2, @temp_array3);
 #if in a b c
 foreach (keys %hash1) {
 	if (exists $hash2{$_} && exists $hash3{$_}) {
-		print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\t$hash1{$_}[3]\t$hash2{$_}[4]\t$hash2{$_}[3]\t$hash3{$_}[4]\t$hash3{$_}[3]\t$hash1{$_}[5]\n";
+		print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\t$hash2{$_}[4]\t$hash3{$_}[4]\t$hash1{$_}[3]\t$hash2{$_}[3]\t$hash3{$_}[3]\t$hash1{$_}[5]\n";
 	}
 }
 
@@ -73,7 +74,7 @@ foreach (keys %hash1) {
 foreach (keys %hash1) {
 	if (exists $hash2{$_}) {
 		unless (exists $hash3{$_}) {
-			print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\t$hash1{$_}[3]\t$hash2{$_}[4]\t$hash2{$_}[3]\tNA\tNA\t$hash1{$_}[5]\n";
+			print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\t$hash2{$_}[4]\tNA\t$hash1{$_}[3]\t$hash2{$_}[3]\tNA\t$hash1{$_}[5]\n";
 		}
 	}
 }
@@ -82,7 +83,7 @@ foreach (keys %hash1) {
 foreach (keys %hash1) {
 	unless (exists $hash2{$_}) {
 		unless (exists $hash3{$_}) {
-		print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\t$hash1{$_}[3]\tNA\tNA\tNA\tNA\t$hash1{$_}[5]\n";
+		print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\tNA\tNA\t$hash1{$_}[3]\tNA\tNA\t$hash1{$_}[5]\n";
 		}
 	}
 }
@@ -91,7 +92,7 @@ foreach (keys %hash1) {
 foreach (keys %hash2) {
 	if (exists $hash3{$_}) {
 		unless (exists $hash1{$_}) {
-			print TEMP "$_\t$hash2{$_}[1]\t$hash2{$_}[2]\tNA\tNA\t$hash2{$_}[4]\t$hash2{$_}[3]\t$hash3{$_}[4]\t$hash3{$_}[3]\t$hash2{$_}[5]\n";
+			print TEMP "$_\t$hash2{$_}[1]\t$hash2{$_}[2]\tNA\t$hash2{$_}[4]\t$hash3{$_}[4]\tNA\t$hash2{$_}[3]\t$hash3{$_}[3]\t$hash2{$_}[5]\n";
 		}
 	}
 }
@@ -100,7 +101,7 @@ foreach (keys %hash2) {
 foreach (keys %hash2) {
 	unless (exists $hash3{$_}) {
 		unless (exists $hash1{$_}) {
-			print TEMP "$_\t$hash2{$_}[1]\t$hash2{$_}[2]\tNA\tNA\t$hash2{$_}[4]\t$hash2{$_}[3]\tNA\tNA\t$hash2{$_}[5]\n";
+			print TEMP "$_\t$hash2{$_}[1]\t$hash2{$_}[2]\tNA\t$hash2{$_}[4]\tNA\t\tNA\t$hash2{$_}[3]\tNA\t$hash2{$_}[5]\n";
 		}
 	}
 }
@@ -109,7 +110,7 @@ foreach (keys %hash2) {
 foreach (keys %hash1) {
 	if (exists $hash3{$_}) {
 		unless (exists $hash2{$_}) {
-		print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\t$hash1{$_}[3]\tNA\tNA\t$hash3{$_}[4]\t$hash3{$_}[3]\t$hash1{$_}[5]\n";
+		print TEMP "$_\t$hash1{$_}[1]\t$hash1{$_}[2]\t$hash1{$_}[4]\tNA\t$hash3{$_}[4]\t$hash1{$_}[3]\tNA\t$hash3{$_}[3]\t$hash1{$_}[5]\n";
 		}
 	}
 }
@@ -118,34 +119,35 @@ foreach (keys %hash1) {
 foreach (keys %hash3) {
 	unless (exists $hash2{$_}) {
 		unless (exists $hash1{$_}) {
-			print TEMP "$_\t$hash3{$_}[1]\t$hash3{$_}[2]\tNA\tNA\tNA\tNA\t$hash3{$_}[4]\t$hash3{$_}[3]\t$hash3{$_}[5]\n";
+			print TEMP "$_\t$hash3{$_}[1]\t$hash3{$_}[2]\tNA\tNA\t$hash3{$_}[4]\tNA\tNA\t$hash3{$_}[3]\t$hash3{$_}[5]\n";
 		}
 	}
 }
+
 close TEMP;
 open (TEMP, "<temp.txt") or die 'File cannot be opened\n\n';
-print OUTFILE "Peptide\tProteinName\tProteinAccessionNumber\tTicRatio$rep1.F/$rep1.H\tTicRatio$rep2.F/$rep2.H\tTicRatio$rep2.F/C$rep2.H\tScanRatio$rep1.F/$rep1.H\tScanRatio$rep2.F/$rep2.H\tScanRatio$rep2.F/C$rep2.H\t$rep1.AmbiguousSite\t$rep1.TicMean\t$rep1.TicStDev\t$rep1.ScanCountMean\n";
+print OUTFILE "Peptide\tProteinName\tProteinAccessionNumber\tTicRatio$rep1.F/$rep1.H\tTicRatio$rep2.F/$rep2.H\tTicRatio$rep3.F/$rep3.H\tScanRatio$rep1.F/$rep1.H\tScanRatio$rep2.F/$rep2.H\tScanRatio$rep3.F/$rep3.H\t$rep1.AmbiguousSite\t$rep1.TicMean\t$rep1.TicStDev\t$rep1.ScanCountMean\t$rep1.ScanCountStDev\n";
 while(my $line=<TEMP>){
 	next if $line=~m/Peptide/;
 	chomp $line;
 	my($peptide, $protein_name, $protein_accession, $rep1tic, $rep2tic, $rep3tic, $rep1scan, $rep2scan, $rep3scan, $flagged) = split(/\t/,$line);
 	print OUTFILE "$peptide\t$protein_name\t$protein_accession\t$rep1tic\t$rep2tic\t$rep3tic\t$rep1scan\t$rep2scan\t$rep3scan\t$flagged\n";
-	my @tic_array;
-		if ($rep1tic =~ m/^d/) {
-			push (@tic_array,$rep1tic);
-		}
-		if ($rep2tic =~ m/^d/) {
-			push (@tic_array,$rep2tic);
-		}
-		if ($rep3tic =~ m/^d/) {
-			push (@tic_array,$rep3tic);
-		}
-	if (@tic_array) {
-		my $sum = eval join '+', @tic_array;
-		my $mean = $sum/$#tic_array unless $#tic_array==0;
-		chomp $mean;
-		print OUTFILE "\t$mean\n";
-	}
+	# my @tic_array;
+		# if ($rep1tic =~ m/^d/) {
+			# push (@tic_array,$rep1tic);
+		# }
+		# if ($rep2tic =~ m/^d/) {
+			# push (@tic_array,$rep2tic);
+		# }
+		# if ($rep3tic =~ m/^d/) {
+			# push (@tic_array,$rep3tic);
+		# }
+	# if (@tic_array) {
+		# my $sum = eval join '+', @tic_array;
+		# my $mean = $sum/$#tic_array unless $#tic_array==0;
+		# chomp $mean;
+		# print OUTFILE "\t$mean\n";
+	# }
 	# else {
 		# print OUTFILE "NA\n";
 	# }
